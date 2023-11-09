@@ -8,7 +8,7 @@ from . import views  # import the file from the same folder
 # first argument is a url path, second argument is a function
 
 urlpatterns = [
-    path(route="", view=views.index),  # /challenge/
+    path(route="", view=views.index, name="index"),  # /challenge/
 
     # mapping with a placeholder, this function will be executed for any url, that comes after challenges/
     path(route="<int:month>", view=views.monthly_challenge_by_number),

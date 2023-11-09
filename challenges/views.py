@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound  # import Django class for handling the http responses
+from django.http import HttpResponse, HttpResponseNotFound, Http404  # import Django class for handling the http responses
 from django.http import HttpResponseRedirect  # redirect function
 from django.urls import reverse
 
@@ -18,31 +18,33 @@ all_challenges = {
     "september": "Come up with a new idea every day",
     "october": "Develop a game",
     "november": "Write an essay",
-    "december": "Buy gifts!"
+    "december": None
 }
 
 
 def index(request):
-    list_items = ""
     months = list(all_challenges.keys())
-
-    for month in months:
-        month_path = reverse(viewname="month-challenge", args=[month])
-        list_items += f"<li><a href=\"{month_path}\">{month.capitalize()}</a></li>"
-
-    response_data = f"<ul>{list_items}</ul>"
-
-    return HttpResponse(response_data)
+    return render(
+        request=request,
+        template_name="challenges/index.html",
+        context={"months": months})
 
 
 def monthly_challenge(request, month: str):
     try:
         challenge_text = all_challenges[month]
-        response_data = f"<h1>{challenge_text}</h1>"
 
-        return HttpResponse(response_data)  # instantiate a response class
+        # read html file and transform it to string, and return as http response
+        return render(
+            request=request,
+            template_name="challenges/challenge.html",
+            context={"month_name": month,
+                     "text": challenge_text})
+        # return HttpResponse(response_data)  # instantiate a response class
+
     except KeyError:
-        return HttpResponseNotFound("This month is not supported!")
+        raise Http404()  # this method automatically will find 404 template in the root folder
+        # return HttpResponseNotFound("This month is not supported!")
 
 
 def monthly_challenge_by_number(request, month: int):
@@ -56,4 +58,5 @@ def monthly_challenge_by_number(request, month: int):
 
         return HttpResponseRedirect(redirect_path)  # implement a redirect
     except IndexError:
-        return HttpResponseNotFound("This month is not supported!")
+        raise Http404()
+        # return HttpResponseNotFound("This month is not supported!")

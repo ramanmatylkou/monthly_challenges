@@ -1,0 +1,21 @@
+{% extends "base.html" %}  <!--Get a template-->
+{% load static %}  <!--import plugin to use static files, stylesheet-->
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "challenges/challenges.css" %}"> <!--apply stylesheets-->
+    <link rel="stylesheet" href="{% static "challenges/includes/header.css" %}">
+{% endblock %}
+
+{% block page_title %}
+    All Challenges
+{% endblock %}
+
+{% block content %}
+    {% include "challenges/includes/header.html" with active_page="index"%}  <!--Include specific content-->
+
+    <ul>
+        {% for month in months %}
+        <li><a href="{% url 'month-challenge' month=month %}">{{ month|title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
